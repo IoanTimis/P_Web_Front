@@ -1,6 +1,5 @@
-import React from 'react'
+import rawTiles from "../../locales/tiles.json"
 import Tile from '../components/tile'
-import rawTiles  from "../../locales/tiles.json"
 
 const tiles = rawTiles as Record<string, {
   name: string
