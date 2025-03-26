@@ -5,7 +5,8 @@ interface TileProps {
   type?: string
   color?: string
   children?: React.ReactNode,
-  price?: number
+  price?: number,
+  players?: number[]
 }
 
 const Tile: React.FC<TileProps> = ({
@@ -13,12 +14,15 @@ const Tile: React.FC<TileProps> = ({
   type,
   color,
   children,
-  price
+  price,
+  players = [1,2,3,4]
 }) => {
-  const tileColor = color || getTileColor(type)
+  const tileColor = color
   const tileType = type || 'default'
+  const tileName = name || 'Tile'
+  
   return (
-    <div className="bg-white text-black border border-black flex flex-col justify-between items-center w-full h-full p-1 text-[10px]">
+    <div className="bg-green-200 text-black border border-black flex flex-col justify-between items-center w-full h-full text-[10px]">
 
   {/* Stripe sus pentru proprietăți normale */}
   {tileType === 'default' && (
@@ -36,8 +40,24 @@ const Tile: React.FC<TileProps> = ({
       <img src="/images/water_icon.png" alt="Utility" className="h-6 mb-1" />
     )}
 
+    {tileName === 'Chance' && (
+      <img src="/images/chance_icon.png" alt="Chance" className="h-6 mb-1" />
+    )}
+
+    {tileName === 'Community Chest' && (
+      <img src="/images/community_chest_icon.png" alt="Community Chest" className="h-6 mb-1" />
+    )}
+
+
     {/* Nume tile */}
     <span className="font-semibold">{name}</span>
+
+    {tileName === 'GO' && (
+      <>
+        <span className="font-semibold">Collect $200</span>
+        <img src="/images/arrow_icon.png" alt="Go" className="h-6 mb-1" />
+      </>
+    )}
   </div>
 
   {/* Preț jos, dacă există */}
@@ -46,26 +66,23 @@ const Tile: React.FC<TileProps> = ({
       ${price}
     </div>
   )}
+
+  {/* Grid jucători jos */}
+{players && players.length > 0 && (
+  <div className="grid grid-cols-4 gap-1">
+    {players.map((playerId) => (
+      <img
+        key={playerId}
+        src={`/images/player_${playerId}.png`}
+        alt={`Player ${playerId}`}
+        className="w-4 h-4"
+      />
+    ))}
+  </div>
+)}
 </div>
 
   )
-}
-
-const getTileColor = (type?: string): string => {
-  switch (type) {
-    case 'corner':
-      return '#9ca3af'
-    case 'railroad':
-      return '#d4d4d4'
-    case 'utility':
-      return '#fcd34d'
-    case 'card':
-      return '#a78bfa'
-    case 'tax':
-      return '#f87171'
-    default:
-      return '#e5e7eb'
-  }
 }
 
 export default Tile
