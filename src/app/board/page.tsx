@@ -18,7 +18,7 @@ const TILE_SIZE = 50
 const BoardPage = () => {
   return (
     <div className="min-h-screen bg-black flex justify-center items-center">
-      <div className="w-[1100px] h-[900px] bg-white flex flex-col">
+      <div className="w-[1100px] h-[900px] bg-green-200 flex flex-col">
         {/* SUS */}
         <div className="grid grid-cols-11 h-[90px]">
           {[...Array(11)].map((_, i) => (
@@ -29,7 +29,7 @@ const BoardPage = () => {
         {/* CENTRU cu STÂNGA + DREAPTA */}
         <div className="flex flex-1">
           {/* STÂNGA */}
-          <div className="grid grid-rows-9 w-[90px]">
+          <div className="grid grid-rows-9 w-[100px]">
           {[...Array(9)].map((_, i) => (
             <Tile key={i} {...tiles[(19 - i).toString()]} />
           ))}
@@ -37,14 +37,14 @@ const BoardPage = () => {
 
   
           {/* CONȚINUT CENTRAL */}
-          <div className="flex-1 bg-gray-200 flex items-center justify-center text-black">
+          <div className="flex-1 bg-green-200  flex items-center justify-center text-black">
             Continut interior
           </div>
   
           {/* DREAPTA */}
-          <div className="grid grid-rows-9 w-[90px]">
+          <div className="grid grid-rows-9 w-[100px]">
           {[...Array(9)].map((_, i) => (
-            <Tile key={i} {...tiles[(39 - i).toString()]} />
+            <Tile key={i} {...tiles[(31 + i).toString()]} />
           ))}
         </div>
         </div>
