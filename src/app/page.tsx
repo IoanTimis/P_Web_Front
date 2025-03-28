@@ -1,7 +1,5 @@
 'use client';
 
-//Acesta este dashboard
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
