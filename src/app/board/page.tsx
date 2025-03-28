@@ -17,7 +17,8 @@ const TILE_COUNT_COL = 9
 const TILE_SIZE = 50
 
 const BoardPage = () => {
-
+  const [players, setPlayers] = useState<number[]>([1, 2, 3, 4])
+  const [showStats, setShowStats] = useState(false)
   const [dice1, setDice1] = useState<number | null>(null)
   const [dice2, setDice2] = useState<number | null>(null)
 
@@ -28,8 +29,13 @@ const BoardPage = () => {
     setDice2(d2)
   }
 
+  const showStatsModal = () => {
+    setShowStats(true)
+    //todo
+  }
+
   return (
-    <div className="min-h-screen bg-black flex justify-center items-center">
+    <div className="min-h-screen bg-gray-200 flex justify-center items-center">
       <div className="w-[1100px] h-[900px] bg-green-200 flex flex-col">
 
         {/* SUS */}
@@ -50,8 +56,8 @@ const BoardPage = () => {
           </div>
 
           {/* CONTINUT CENTRAL */}
-          <div className="flex-1 bg-green-200 flex items-center justify-center text-black">
-            <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg">
+          <div className="flex-1 flex-col bg-green-200 flex items-center justify-center text-black">
+            <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg rounded-md">
               {/* Tabs */}
               <div className="flex justify-between mb-2">
                 {['Buy', 'Manage', 'Trade'].map((tab) => (
@@ -69,12 +75,12 @@ const BoardPage = () => {
                 {/* Status textarea */}
                 <textarea
                   readOnly
-                  className="border border-black resize-none p-1 w-full h-20 text-xs font-mono"
+                  className="border border-black resize-none rounded-md p-1 w-full h-20 text-xs font-mono"
                   defaultValue={`It is Player 1's turn.`}
                 ></textarea>
 
                 {/* Player info */}
-                <div className="ml-2 border border-black px-2 w-[85px] py-1 text-xs font-semibold bg-white">
+                <div className="ml-2 border border-black rounded-md px-2 w-[85px] py-1 text-xs font-semibold bg-white">
                   <div className="text-black">Player 1:</div>
                   <div className="text-green-700">$1500</div>
                 </div>
@@ -108,6 +114,25 @@ const BoardPage = () => {
                 </div>
               </div>
             </div>
+            {/* Player Stats - sub banii jucătorului */}
+            <div className="mt-3 grid grid-cols-2 gap-2 w-100">
+  {players.map((playerId) => (
+    <div
+      key={playerId}
+      onClick={() => setShowStats(true)}
+      className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
+    >
+      <div className="font-semibold">Player {playerId}</div>
+      <div className="text-green-700 font-bold">$1500</div>
+
+      {/* Tooltip */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-fit bg-black text-white text-[10px] rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+        {/* Conținut personalizat pentru fiecare jucător */}
+        Informatii
+      </div>
+    </div>
+  ))}
+</div>
           </div>
 
           {/* DREAPTA */}
