@@ -24,14 +24,11 @@ const Tile: React.FC<TileProps> = ({
   return (
     <div className="bg-green-200 text-black border border-black flex flex-col justify-between items-center w-full h-full text-[10px]">
 
-  {/* Stripe sus pentru proprietăți normale */}
   {tileType === 'default' && (
     <div className="w-full h-[12px]" style={{ backgroundColor: tileColor }}></div>
   )}
 
-  {/* Conținut central */}
   <div className="flex-1 flex flex-col justify-center items-center text-center px-1">
-    {/* Imagine pentru tipuri speciale */}
     {tileType === 'railroad' && (
       <img src="/images/train_icon.png" alt="Railroad" className="h-6 mb-1" />
     )}
@@ -49,7 +46,6 @@ const Tile: React.FC<TileProps> = ({
     )}
 
 
-    {/* Nume tile */}
     <span className="font-semibold">{name}</span>
 
     {tileName === 'GO' && (
@@ -60,14 +56,12 @@ const Tile: React.FC<TileProps> = ({
     )}
   </div>
 
-  {/* Preț jos, dacă există */}
   {price && (
     <div className="text-center text-[9px]">
       ${price}
     </div>
   )}
 
-  {/* Grid jucători jos */}
 {players && players.length > 0 && (
   <div className="grid grid-cols-4 gap-1">
     {players.map((playerId) => (
