@@ -35,8 +35,8 @@ const BoardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200 flex justify-center items-center">
-      <div className="w-[1100px] h-[900px] bg-green-200 flex flex-col">
+    <div className="py-1  min-h-screen bg-gray-200 flex justify-center items-center">
+      <div className="w-[1100px] min-h-screen bg-green-200 flex flex-col">
 
         {/* SUS */}
         <div className="grid grid-cols-11 h-[90px]">

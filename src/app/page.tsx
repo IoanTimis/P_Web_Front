@@ -34,21 +34,21 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm space-y-4">
+      <form onSubmit={handleSubmit} className="text-gray-800 bg-white p-8 rounded-xl shadow-md w-full max-w-sm space-y-4">
         <h2 className="text-2xl font-bold text-center">
           {isRegistering ? 'Register' : 'Login'}
         </h2>
         <input
           type="email"
           placeholder="Email"
-          className="w-full border p-2 rounded"
+          className="text-gray-800 w-full border p-2 rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full border p-2 rounded"
+          className="text-gray-800 w-full border p-2 rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
