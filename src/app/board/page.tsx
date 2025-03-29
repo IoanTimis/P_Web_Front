@@ -36,7 +36,7 @@ const BoardPage = () => {
 
   return (
     <div className="py-1  min-h-screen bg-gray-200 flex justify-center items-center">
-      <div className="w-[1100px] min-h-screen bg-green-200 flex flex-col">
+      <div className="w-[1100px] min-h-screen bg-green-200 flex flex-col shadow-2xl">
 
         {/* SUS */}
         <div className="grid grid-cols-11 h-[90px]">
@@ -63,7 +63,8 @@ const BoardPage = () => {
                 {['Buy', 'Manage', 'Trade'].map((tab) => (
                   <button
                     key={tab}
-                    className="bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500 to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
+                    className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
+                     to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
                   >
                     {tab}
                   </button>
@@ -89,7 +90,7 @@ const BoardPage = () => {
               {/* Roll Dice Button */}
               <div className="flex justify-between items-center mt-2">
                 <button
-                  className="px-3 py-1 text-xs border border-black hover:bg-gray-200 rounded-md"
+                  className="px-3 py-1 cursor-pointer text-xs border border-black hover:bg-gray-200 rounded-md"
                   onClick={rollDice}
                 >
                   Roll Dice

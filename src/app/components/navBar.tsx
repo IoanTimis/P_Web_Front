@@ -12,13 +12,17 @@ const NavBar = () => {
 
     return (
         <nav className="bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
-            <div className="text-lg font-semibold">
+            <div className="text-lg font-semibold space-x-4">
                 <Link href="/">🏠 Monopoly</Link>
-            </div>
-            <div className="space-x-4">
                 <Link href="/dashboard" className="hover:underline">Dashboard</Link>
                 <Link href="/board" className="hover:underline">Board</Link>
-                <button onClick={handleLogout} className="hover:underline text-red-400">Logout</button>
+            </div>
+            <div className="">
+                <button onClick={handleLogout}
+                    className="cursor-pointer hover:underline text-red-400"
+                    >
+                    Logout
+                </button>
             </div>
         </nav>
     );
