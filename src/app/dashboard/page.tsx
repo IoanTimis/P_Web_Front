@@ -2,10 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Dashboard() {
+
   const router = useRouter();
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
