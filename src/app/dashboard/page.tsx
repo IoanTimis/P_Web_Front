@@ -1,32 +1,22 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/page';
 
 export default function Dashboard() {
-
   const router = useRouter();
-  const [user, setUser] = useState<{ email: string } | null>(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) {
-      router.push('/');
-    } else {
-      setUser(JSON.parse(stored));
-    }
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    router.push('/');
-  };
+  const user = useSelector((state: RootState) => state.user.data?.user);
+  console.log('user', user);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-      <h1 className="text-3xl font-bold mb-4 text-gray-700">Welcome, {user?.email}</h1>
+      <h1 className="text-3xl font-bold mb-4 text-gray-700">Welcome, {user?.userName}</h1>
       <div className="flex flex-col gap-4 w-full max-w-md">
         <button
           onClick={() => router.push('/create-game')}

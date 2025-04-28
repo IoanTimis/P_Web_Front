@@ -1,6 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+// store/slices/userSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface User {
+  token: string;
+  userName: string;
+}
+
+interface UserState {
+  data: { user: User } | null;
+}
+
+const initialState: UserState = {
   data: null,
 };
 
@@ -8,12 +18,12 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action) => {
+    setUser(state, action: PayloadAction<{ user: User }>) {
       state.data = action.payload;
     },
-    clearUser: (state) => {
+    clearUser(state) {
       state.data = null;
-    }
+    },
   },
 });
 

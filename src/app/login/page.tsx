@@ -1,40 +1,42 @@
 'use client';
-
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/slices/userSlice';  // ← import corect
+import type { AppDispatch } from '@/store/page';         // ← import tipul dispatch-ului
 
 export default function LoginPage() {
-    const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const router = useRouter();
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();      // ← spunem TS că dispatch are tipul AppDispatch
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(
-                `${apiUrl}/users/login`,
-                { username: userName, password: password },
-                { withCredentials: true }
-            );
-
-            console.log('Login response:', response);
-            const decoded = jwtDecode(response.data.token);
-            console.log('Decoded token:', decoded);
-
-            if (response.status === 200) {
-                localStorage.setItem('user', JSON.stringify(response.data));
-                router.push('/dashboard');
-            }
-        }
-        catch (error) {
-            console.error('Error logging in:', error);
-            alert('Login failed. Please check your credentials.');
-        }
-    };
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${apiUrl}/users/login`,
+        { username: userName, password },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        const user = {
+          token: response.data.token,
+          userName,
+        };
+        // depune în Redux
+        dispatch(setUser({ user }));               // ← folosești creatorul de acțiuni
+        // nu mai ai nevoie să dai manual localStorage.setItem()
+        router.push('/dashboard');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      alert('Login failed. Please check your credentials.');
+    }
+  };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
