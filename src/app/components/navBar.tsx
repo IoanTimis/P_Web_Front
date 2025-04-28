@@ -27,8 +27,8 @@ const NavBar = () => {
       <nav className="bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
         <div className="text-lg font-semibold space-x-4">
           <Link href="/">🏠 Monopoly</Link>
-          <Link href="/dashboard" className="hover:underline">Dashboard</Link>
-          <Link href="/board" className="hover:underline">Board</Link>
+          <Link href="/player/dashboard" className="hover:underline">Dashboard</Link>
+          <Link href="/player/board" className="hover:underline">Board</Link>
         </div>
         <div>
             {user && (

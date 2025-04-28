@@ -15,9 +15,9 @@ export default function HomePage() {
 
   const handlePlayNow = () => {
     if (isLoggedIn) {
-      router.push('/dashboard');
+      router.push('/player/dashboard');
     } else {
-      router.push('/login');
+      router.push('/auth/login');
     }
   };
 
