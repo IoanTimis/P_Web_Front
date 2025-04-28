@@ -19,14 +19,15 @@ export default function Dashboard() {
       <h1 className="text-3xl font-bold mb-4 text-gray-700">Welcome, {user?.userName}</h1>
       <div className="flex flex-col gap-4 w-full max-w-md">
         <button
-          onClick={() => router.push('/create-game')}
+          onClick={() => router.push('/player/create-game')}
           className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
-          Create Custom Game
+          Create Game
         </button>
 
         <button
-          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-800 transition"
+          onClick={() => router.push('/player/join-game')}
         >
           Join Game
         </button>

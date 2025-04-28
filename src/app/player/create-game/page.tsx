@@ -11,7 +11,7 @@ export default function CreateGamePage() {
   const handleCreateGame = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem('gameSettings', JSON.stringify({ playerCount, gameName }));
-    router.push('/board');
+    router.push('/player/board');
   };
 
   return (
