@@ -35,7 +35,7 @@ export default function RegisterPage() {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        router.push('/login');
+        router.push('/auth/login');
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -86,7 +86,7 @@ export default function RegisterPage() {
 
         <p className="text-sm text-gray-800 text-center">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline">
+          <Link href="/auth/login" className="text-blue-600 hover:underline">
             Login
           </Link>
         </p>

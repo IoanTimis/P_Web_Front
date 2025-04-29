@@ -3,12 +3,20 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
 interface Game {
-  id: string;
+  current_player_id: number;
+  id: number;
+  placements: Array<{
+    placement: number;
+    player_id: number;
+  }>;
+  player_count: number;
+  players: Array<{
+    id: number;
+    username: string;
+  }>;
+  max_players: number;
   name: string;
-  players: number;
-  maxPlayers: number;
 }
 
 export default function JoinRoomPage() {
@@ -20,7 +28,7 @@ export default function JoinRoomPage() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const resp = await axios.get<Game[]>(`${apiUrl}/games/available`);
+        const resp = await axios.get<Game[]>(`${apiUrl}/games`);
         setGames(resp.data);
       } catch (err) {
         console.error('Error fetching games:', err);
@@ -33,14 +41,12 @@ export default function JoinRoomPage() {
 
   const handleJoin = async (gameId: string) => {
     try {
-      // înscriere pe server
       await axios.post(
         `${apiUrl}/games/${gameId}/join`,
         {},
         { withCredentials: true }
       );
-      // navighează în camera de joc
-      router.push(`/game/${gameId}`);
+      router.push(`/player/waiting-room/${gameId}`);
     } catch (err) {
       console.error('Join failed:', err);
       alert('Nu s-a putut intra în joc. Încearcă din nou.');
@@ -101,19 +107,19 @@ export default function JoinRoomPage() {
                   {g.name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-700">
-                  {g.players} / {g.maxPlayers}
+                  {g.players.length} / {g.max_players}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
                   <button
                     onClick={() => handleJoin(g.id)}
-                    disabled={g.players >= g.maxPlayers}
+                    disabled={g.players.length >= g.max_players}
                     className={`px-4 py-2 text-sm font-medium rounded-lg transition ${
-                      g.players < g.maxPlayers
+                      g.players.length < g.max_players
                         ? 'bg-green-600 hover:bg-green-700 text-white'
                         : 'bg-gray-300 text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    {g.players < g.maxPlayers ? 'Join' : 'Full'}
+                    {g.players.length < g.max_players ? 'Join' : 'Full'}
                   </button>
                 </td>
               </tr>
