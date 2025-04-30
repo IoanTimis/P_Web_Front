@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
 interface Game {
   current_player_id: number;
   id: number;
@@ -25,6 +26,9 @@ export default function JoinRoomPage() {
   const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+  const user = useSelector((state: any) => state.user);
+  console.log('userJoin', user);
+
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -44,7 +48,12 @@ export default function JoinRoomPage() {
       await axios.post(
         `${apiUrl}/games/${gameId}/join`,
         {},
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
       );
       router.push(`/player/waiting-room/${gameId}`);
     } catch (err) {

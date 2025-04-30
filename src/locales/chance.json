@@ -1,0 +1,18 @@
+{
+  "0": { "name": "Advance to Go (Collect $200)" },
+  "1": { "name": "Advance to Illinois Ave. – If you pass Go, collect $200" },
+  "2": { "name": "Advance to St. Charles Place – If you pass Go, collect $200" },
+  "3": { "name": "Advance token to the nearest Utility. If unowned, you may buy it. If owned, pay owner 10x the dice roll." },
+  "4": { "name": "Advance token to the nearest Railroad and pay owner twice the rental. If unowned, you may buy it." },
+  "5": { "name": "Bank pays you dividend of $50" },
+  "6": { "name": "Get out of Jail Free – This card may be kept until needed or sold." },
+  "7": { "name": "Go back 3 spaces" },
+  "8": { "name": "Go to Jail – Go directly to Jail – Do not pass Go – Do not collect $200" },
+  "9": { "name": "Make general repairs on all your property – For each house pay $25 – For each hotel pay $100" },
+  "10": { "name": "Pay poor tax of $15" },
+  "11": { "name": "Take a trip to Reading Railroad – If you pass Go, collect $200" },
+  "12": { "name": "Take a walk on the Boardwalk – Advance token to Boardwalk" },
+  "13": { "name": "You have been elected Chairman of the Board – Pay each player $50" },
+  "14": { "name": "Your building loan matures – Collect $150" },
+  "15": { "name": "Advance to the nearest Railroad. Pay owner twice the rental. If unowned, you may buy it." }
+}
