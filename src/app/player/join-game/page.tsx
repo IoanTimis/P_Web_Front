@@ -27,6 +27,7 @@ export default function JoinRoomPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const user = useSelector((state: any) => state.user);
+  const token = String(user?.data?.user?.token);
   console.log('userJoin', user);
 
   useEffect(() => {
@@ -45,16 +46,19 @@ export default function JoinRoomPage() {
 
   const handleJoin = async (gameId: number) => {
     try {
+      console.log("userButon", user.data.user.token);
       await axios.post(
         `${apiUrl}/games/${gameId}/join`,
         {},
         {
           withCredentials: true,
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
+
+      console.log('Joined game:', gameId);
       router.push(`/player/waiting-room/${gameId}`);
     } catch (err) {
       console.error('Join failed:', err);
