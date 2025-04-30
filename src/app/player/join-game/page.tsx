@@ -39,7 +39,7 @@ export default function JoinRoomPage() {
     fetchGames();
   }, [apiUrl]);
 
-  const handleJoin = async (gameId: string) => {
+  const handleJoin = async (gameId: number) => {
     try {
       await axios.post(
         `${apiUrl}/games/${gameId}/join`,

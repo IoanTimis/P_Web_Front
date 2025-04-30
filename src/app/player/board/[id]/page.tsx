@@ -1,6 +1,6 @@
 "use client"
-import rawTiles from "../../../locales/tiles.json"
-import Tile from '../../components/tile'
+import rawTiles from "@/locales/tiles.json"
+import Tile from '@/app/components/tile'
 import React, { useState } from 'react'
 
 
