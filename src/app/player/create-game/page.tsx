@@ -1,17 +1,40 @@
 'use client';
 
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function CreateGamePage() {
   const router = useRouter();
   const [playerCount, setPlayerCount] = useState(2);
   const [gameName, setGameName] = useState('');
+  const user = useSelector((state: any) => state.user);
+  const token = String(user?.data?.user?.token);
 
-  const handleCreateGame = (e: React.FormEvent) => {
+  const handleCreateGame = async (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem('gameSettings', JSON.stringify({ playerCount, gameName }));
-    router.push('/player/board');
+
+    try {
+      const response = await axios.post(
+        `${apiUrl}/games/create?max_players=${playerCount}`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      router.push(`/player/waiting-room/${response.data.game_id}`);
+    } catch (err) {
+      console.error('Create failed:', err);
+      alert('Nu s-a putut crea jocul. Încearcă din nou.');
+    }
   };
 
   return (
