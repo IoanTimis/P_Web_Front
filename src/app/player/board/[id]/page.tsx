@@ -29,7 +29,11 @@ const TILE_SIZE = 50
 const BoardPage = () => {
   const [game, setGame] = useState<any>(null)
   const [players, setPlayers] = useState<Array<Player>>([])
-  const [showStats, setShowStats] = useState(false)
+  const [showStatsModal, setShowStatsModal] = useState(false)
+  const [showTradeModal, setShowTradeModal] = useState(false)
+  const [showAuctionModal, setShowAuctionModal] = useState(false)
+  const [showChance, setShowChance] = useState(false)
+  const [showCommunityChest, setShowCommunityChest] = useState(false)
   const [dice1, setDice1] = useState<number | null>(null)
   const [dice2, setDice2] = useState<number | null>(null)
 
@@ -37,6 +41,63 @@ const BoardPage = () => {
 
   const user = useSelector((state: any) => state.user);
   const token = String(user?.data?.user?.token);
+
+  const statsModal = () => {
+    //todo
+  }
+
+  const tradeModal = () => {
+    //todo
+  }
+
+  const auctionModal = () => {
+    //todo
+  }
+
+  const onCloseStatsModal = () => {
+    setShowStatsModal(false)
+  }
+
+  const onCloseTradeModal = () => {
+    setShowTradeModal(false)
+  }
+
+  const onCloseAuctionModal = () => {
+    setShowAuctionModal(false)
+  }
+
+  const onCloseChance = () => {
+    setShowChance(false)
+  }
+
+  const onCloseCommunityChest = () => {
+    setShowCommunityChest(false)
+  }
+  
+  const onBuy = () => {
+    //todo
+  }
+
+  const onPayRent = () => {
+    //todo
+  }
+
+  const onAuction = () => {
+    //todo
+  }
+
+  const onChance = () => {
+    //todo
+  }
+
+  const onCommunityChest = () => {
+    //todo
+  }
+
+  const onTrade = () => {
+    //todo
+  }
+
 
   useEffect(() => {
     const gameStatus = async () => {
@@ -86,14 +147,10 @@ const BoardPage = () => {
     setDice1(roll.data.dice[0]);
     setDice2(roll.data.dice[1])
 
+    // go to prison, start(collect 200),luxury tax, chance, community chest
     if(roll.data.property.can_buy) {
-      
-    }
-  }
 
-  const showStatsModal = () => {
-    setShowStats(true)
-    //todo
+    }
   }
 
   return (
@@ -183,7 +240,7 @@ const BoardPage = () => {
     <div
     //Todo: temporar va trebui modficata.
       key={index}
-      onClick={() => setShowStats(true)}
+      onClick={() => setShowStatsModal(true)}
       className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
     >
       <div className="font-semibold">Player {index}</div>
