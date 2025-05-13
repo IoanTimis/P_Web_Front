@@ -29,7 +29,6 @@ const Tile: React.FC<TileProps> = ({
   const tileColor = color
   const tileType = type || 'default'
   const tileName = name || 'Tile'
-  console.log(players, "players");
   
   return (
     <div className="bg-green-200 text-black border border-black flex flex-col justify-between items-center w-full h-full text-[10px]">
@@ -76,7 +75,6 @@ const Tile: React.FC<TileProps> = ({
 {players && players.length > 0 && (
   <div className="grid grid-cols-4 gap-1">
     {players.map((player, index) => {
-      // console.log(player.position, "pozitia", tileNumber);
       if(tileNumber == player.position) {
         const playerNumber = index + 1;
         return (

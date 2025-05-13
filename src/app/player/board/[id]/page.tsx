@@ -69,14 +69,26 @@ const BoardPage = () => {
     // Reactualizare informatii la interval, acum e 5 sec, poate sa fie mai mult
     // const interval = setInterval(gameStatus, 5000);
     // return () => clearInterval(interval);
-  }, [id, token]);
+  }, [id, token, dice1]);
 
-  const rollDice = () => {
-    //todo: Moves the player
-    const d1 = Math.floor(Math.random() * 6) + 1
-    const d2 = Math.floor(Math.random() * 6) + 1
-    setDice1(d1)
-    setDice2(d2)
+  const rollDice = async () => {
+    const roll = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/roll`,
+      {player_id: game.current_player_id},
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+    console.log('Rolled dice:', roll.data);
+
+    setDice1(roll.data.dice[0]);
+    setDice2(roll.data.dice[1])
+
+    if(roll.data.property.can_buy) {
+      
+    }
   }
 
   const showStatsModal = () => {
