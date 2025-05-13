@@ -1,14 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { ClipboardIcon } from '@heroicons/react/24/solid';
+import axios from 'axios';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Game } from '../../join-game/page';
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function WaitingRoomPage() {
-  // temporary hard‐coded players, replace with real data
+  const router = useRouter();
+  const user = useSelector((state: any) => state.user);
+  const token = String(user?.data?.user?.token);
+  const { id } = useParams<{ id: string }>();
   const [players, setPlayers] = useState<string[]>([
-    'Alice',
-    'Bob',
-    'Charlie',
+
   ]);
   const [inviteLink, setInviteLink] = useState(
     typeof window !== 'undefined'
@@ -28,16 +35,42 @@ export default function WaitingRoomPage() {
     }
   };
 
-  // simulate dynamic join
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPlayers((prev) =>
-        prev.length < 6
-          ? [...prev, `Player${prev.length + 1}`]
-          : prev
+  const handleStartGame = async () => {
+    try {
+      await axios.post(
+        `${apiUrl}/games/${id}/start`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    }, 5000);
-    return () => clearInterval(timer);
+
+      router.push(`/player/board/${id}`);
+    } catch (err) {
+      alert('Nu s-a putut incepe jocul. Nu sunt destui jucatori');
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        const resp = await axios.get<Game>(`${apiUrl}/games/${id}/player_data`, {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setPlayers(resp.data.players.map(player => player.username));
+      } catch (err) {
+        console.error('Error fetching games:', err);
+      }
+    };
+    fetchGame();
   }, []);
 
   return (
@@ -111,13 +144,12 @@ export default function WaitingRoomPage() {
 
         {/* Start Button */}
         <button
-          disabled={players.length < 2}
           className={`w-full py-2 rounded-lg text-white font-semibold transition ${
             players.length >= 2
               ? 'bg-green-600 hover:bg-green-700'
               : 'bg-gray-400 cursor-not-allowed'
           }`}
-          onClick={() => alert('Starting game...')}
+          onClick={handleStartGame}
         >
           {players.length >= 2
             ? 'Start Game'

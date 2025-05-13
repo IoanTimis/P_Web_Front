@@ -1,13 +1,21 @@
 import React from 'react'
 
 interface TileProps {
-  name: string
-  type?: string
-  color?: string
-  children?: React.ReactNode,
-  price?: number,
-  players?: number[]
+  name: string;
+  type?: string;
+  color?: string;
+  children?: React.ReactNode;
+  price?: number;
+  tileNumber?: number;
+  players?: Array<{
+    id: number;
+    position: number;
+    balance: number;
+    in_jail: boolean;
+    is_bankrupt: boolean;
+  }>;
 }
+
 
 const Tile: React.FC<TileProps> = ({
   name,
@@ -15,11 +23,13 @@ const Tile: React.FC<TileProps> = ({
   color,
   children,
   price,
-  players = [1,2,3,4]
+  players,
+  tileNumber
 }) => {
   const tileColor = color
   const tileType = type || 'default'
   const tileName = name || 'Tile'
+  console.log(players, "players");
   
   return (
     <div className="bg-green-200 text-black border border-black flex flex-col justify-between items-center w-full h-full text-[10px]">
@@ -62,16 +72,23 @@ const Tile: React.FC<TileProps> = ({
     </div>
   )}
 
+  {/* Adauga poza pion */}
 {players && players.length > 0 && (
   <div className="grid grid-cols-4 gap-1">
-    {players.map((playerId) => (
-      <img
-        key={playerId}
-        src={`/images/player_${playerId}.png`}
-        alt={`Player ${playerId}`}
-        className="w-4 h-4"
-      />
-    ))}
+    {players.map((player, index) => {
+      // console.log(player.position, "pozitia", tileNumber);
+      if(tileNumber == player.position) {
+        const playerNumber = index + 1;
+        return (
+          <img
+            key={playerNumber}
+            src={`/images/player_${playerNumber}.png`}
+            alt={`Player ${playerNumber}`}
+            className="w-4 h-4"
+          />
+        );
+    }
+    })}
   </div>
 )}
 </div>

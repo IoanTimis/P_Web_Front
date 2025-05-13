@@ -1,11 +1,12 @@
 'use client';
 
-
 import { useState, useEffect } from 'react';
+
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-interface Game {
+export interface Game {
   current_player_id: number;
   id: number;
   placements: Array<{

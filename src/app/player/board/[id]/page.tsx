@@ -1,8 +1,18 @@
 "use client"
 import rawTiles from "@/locales/tiles.json"
 import Tile from '@/app/components/tile'
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { useSelector } from 'react-redux'
+import axios from "axios"
 
+type Player = {
+  id: number;
+  position: number;
+  balance: number;
+  in_jail: boolean;
+  is_bankrupt: boolean;
+};
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -17,12 +27,52 @@ const TILE_COUNT_COL = 9
 const TILE_SIZE = 50
 
 const BoardPage = () => {
-  const [players, setPlayers] = useState<number[]>([1, 2, 3, 4])
+  const [game, setGame] = useState<any>(null)
+  const [players, setPlayers] = useState<Array<Player>>([])
   const [showStats, setShowStats] = useState(false)
   const [dice1, setDice1] = useState<number | null>(null)
   const [dice2, setDice2] = useState<number | null>(null)
 
+  const { id } = useParams<{ id: string }>();
+
+  const user = useSelector((state: any) => state.user);
+  const token = String(user?.data?.user?.token);
+
+  useEffect(() => {
+    const gameStatus = async () => {
+      if (!id || !token) {
+        console.error('Missing id or token');
+        return;
+      }
+      
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/games/${id}`,
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          });
+        
+        console.log('gameStatus', response.data);
+        //Poate nu avem nevoie de setPlayers
+        setGame(response.data);
+        setPlayers(response.data.players.map((player: any) => player));
+
+      } catch (err) {
+        console.error('Error fetching game status:', err);
+      }
+    };
+    
+    gameStatus();
+    // Reactualizare informatii la interval, acum e 5 sec, poate sa fie mai mult
+    // const interval = setInterval(gameStatus, 5000);
+    // return () => clearInterval(interval);
+  }, [id, token]);
+
   const rollDice = () => {
+    //todo: Moves the player
     const d1 = Math.floor(Math.random() * 6) + 1
     const d2 = Math.floor(Math.random() * 6) + 1
     setDice1(d1)
@@ -41,7 +91,7 @@ const BoardPage = () => {
         {/* SUS */}
         <div className="grid grid-cols-11 h-[90px]">
           {[...Array(11)].map((_, i) => (
-            <Tile key={i} {...tiles[(20 + i).toString()]} />
+            <Tile tileNumber={i + 20} players={players} key={i} {...tiles[(20 + i).toString()]} />
           ))}
         </div>
 
@@ -51,7 +101,7 @@ const BoardPage = () => {
           {/* STÂNGA */}
           <div className="grid grid-rows-9 w-[100px]">
             {[...Array(9)].map((_, i) => (
-              <Tile key={i} {...tiles[(19 - i).toString()]} />
+              <Tile tileNumber={19 - i} players={players} key={i} {...tiles[(19 - i).toString()]} />
             ))}
           </div>
 
@@ -117,13 +167,14 @@ const BoardPage = () => {
             </div>
             {/* Player Stats - sub banii jucătorului */}
             <div className="mt-3 grid grid-cols-2 gap-2 w-100">
-  {players.map((playerId) => (
+  {players.map((player, index) => (
     <div
-      key={playerId}
+    //Todo: temporar va trebui modficata.
+      key={index}
       onClick={() => setShowStats(true)}
       className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
     >
-      <div className="font-semibold">Player {playerId}</div>
+      <div className="font-semibold">Player {index}</div>
       <div className="text-green-700 font-bold">$1500</div>
 
       {/* Tooltip */}
@@ -139,7 +190,7 @@ const BoardPage = () => {
           {/* DREAPTA */}
           <div className="grid grid-rows-9 w-[100px]">
             {[...Array(9)].map((_, i) => (
-              <Tile key={i} {...tiles[(31 + i).toString()]} />
+              <Tile tileNumber={i + 31} players={players} key={i} {...tiles[(31 + i).toString()]} />
             ))}
           </div>
 
@@ -148,7 +199,7 @@ const BoardPage = () => {
         {/* JOS */}
         <div className="grid grid-cols-11 h-[90px]">
           {[...Array(11)].map((_, i) => (
-            <Tile key={i} {...tiles[i.toString()]} />
+            <Tile tileNumber={10 - i} players={players} key={i} {...tiles[(10 - i ).toString()]} />
           ))}
         </div>
 
