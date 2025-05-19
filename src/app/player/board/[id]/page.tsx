@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import axios from "axios"
+import PlayerStatusModal from "@/app/components/statsModal"
 
 type Player = {
   id: number;
@@ -22,13 +23,23 @@ const tiles = rawTiles as Record<string, {
   amount?: number
 }>
 
+const property = {
+  can_buy: Boolean,
+  id: Number,
+  name: String,
+  price: Number
+}
+
 const TILE_COUNT_ROW = 11
 const TILE_COUNT_COL = 9
 const TILE_SIZE = 50
 
 const BoardPage = () => {
   const [game, setGame] = useState<any>(null)
-  const [players, setPlayers] = useState<Array<Player>>([])
+  const [newBuy, setNewBuy] = useState<boolean>(false)
+  const [currentRound, setCurrentRound] = useState<any>()
+  const [players, setPlayers] = useState<Player[]>([])
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [showAuctionModal, setShowAuctionModal] = useState(false)
@@ -43,7 +54,7 @@ const BoardPage = () => {
   const token = String(user?.data?.user?.token);
 
   const statsModal = () => {
-    //todo
+    setShowStatsModal(true); 
   }
 
   const tradeModal = () => {
@@ -74,9 +85,27 @@ const BoardPage = () => {
     setShowCommunityChest(false)
   }
   
-  const onBuy = () => {
-    //todo
-  }
+  const onBuy = (id_prop: number) => {
+    try {
+      const buy = async () => {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/property/${id_prop}/buy`,
+          { player_id: game.current_player_id },
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Buy response:', response.data);
+      };
+      buy();
+      setNewBuy(true);
+    } catch (err) {
+      console.error('Error buying property:', err);
+    }
+  };
 
   const onPayRent = () => {
     //todo
@@ -117,39 +146,61 @@ const BoardPage = () => {
           });
         
         console.log('gameStatus', response.data);
-        //Poate nu avem nevoie de setPlayers
         setGame(response.data);
         setPlayers(response.data.players.map((player: any) => player));
-
+        setCurrentPlayer(response.data.players.find((player: any) => player.id === response.data.current_player_id));
       } catch (err) {
         console.error('Error fetching game status:', err);
       }
     };
     
     gameStatus();
-    // Reactualizare informatii la interval, acum e 5 sec, poate sa fie mai mult
+    // Reactualizare informatii la interval, acum e 5 sec
     // const interval = setInterval(gameStatus, 5000);
     // return () => clearInterval(interval);
   }, [id, token, dice1]);
 
+  console.log("currentPlayer", currentPlayer);
+
   const rollDice = async () => {
-    const roll = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/roll`,
-      {player_id: game.current_player_id},
-      {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-    console.log('Rolled dice:', roll.data);
+    try {
+      const roll = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/roll`,
+        {player_id: game.current_player_id},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+      console.log('Rolled dice:', roll.data);
 
-    setDice1(roll.data.dice[0]);
-    setDice2(roll.data.dice[1])
+      setNewBuy(false)
+      setCurrentRound(roll.data.property);
+      setDice1(roll.data.dice[0]);
+      setDice2(roll.data.dice[1])
 
-    // go to prison, start(collect 200),luxury tax, chance, community chest
-    if(roll.data.property.can_buy) {
+      // go to prison, start(collect 200),luxury tax, chance, community chest
+      // price isnt 0
+      if(roll.data.property.can_buy) {
+        //todo: buy/start auction
+      } else if(roll.data.property.can_pay_rent) {
 
+      } else if(roll.data.property.auction) {
+        //todo: auction
+      } else if(roll.data.property.chance) {
+
+      } else if(roll.data.property.community_chest) {
+
+      } else if(roll.data.property.go_to_jail) {
+
+      } else if(roll.data.property.luxury_tax) {
+
+      } else if(roll.data.property.start) {
+
+      }
+    } catch (err) {
+      console.error('Error rolling dice:', err);
     }
   }
 
@@ -179,7 +230,7 @@ const BoardPage = () => {
             <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg rounded-md">
               {/* Tabs */}
               <div className="flex justify-between mb-2">
-                {['Buy', 'Manage', 'Trade'].map((tab) => (
+                {/* {['Buy', 'Manage', 'Trade'].map((tab) => (
                   <button
                     key={tab}
                     className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
@@ -187,7 +238,16 @@ const BoardPage = () => {
                   >
                     {tab}
                   </button>
-                ))}
+                ))} */}
+
+                <button
+                  onClick={() => onBuy(currentRound?.id)}
+                    className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
+                     to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
+                  >
+                    buy
+                  </button>
+
               </div>
 
               {/* Status + Player */}
@@ -236,24 +296,24 @@ const BoardPage = () => {
             </div>
             {/* Player Stats - sub banii jucătorului */}
             <div className="mt-3 grid grid-cols-2 gap-2 w-100">
-  {players.map((player, index) => (
-    <div
-    //Todo: temporar va trebui modficata.
-      key={index}
-      onClick={() => setShowStatsModal(true)}
-      className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
-    >
-      <div className="font-semibold">Player {index}</div>
-      <div className="text-green-700 font-bold">$1500</div>
+              {players.map((player, index) => (
+                <div
+                //Todo: temporar va trebui modficata.
+                  key={index}
+                  onClick={() => setShowStatsModal(true)}
+                  className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
+                >
+                  <div className="font-semibold">Player {index}</div>
+                  <div className="text-green-700 font-bold">$1500</div>
 
-      {/* Tooltip */}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-fit bg-black text-white text-[10px] rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-        {/* Conținut personalizat pentru fiecare jucător */}
-        Informatii
-      </div>
-    </div>
-  ))}
-</div>
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-fit bg-black text-white text-[10px] rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                    {/* Conținut personalizat pentru fiecare jucător */}
+                    Informatii
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* DREAPTA */}
@@ -271,6 +331,8 @@ const BoardPage = () => {
             <Tile tileNumber={10 - i} players={players} key={i} {...tiles[(10 - i ).toString()]} />
           ))}
         </div>
+        {/* MODAL */}
+       
 
       </div>
     </div>
