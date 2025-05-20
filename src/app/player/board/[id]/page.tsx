@@ -36,7 +36,7 @@ const TILE_SIZE = 50
 
 const BoardPage = () => {
   const [game, setGame] = useState<any>(null)
-  const [newBuy, setNewBuy] = useState<boolean>(false)
+  const [canBuy, setCanBuy] = useState<boolean>(false)
   const [currentRound, setCurrentRound] = useState<any>()
   const [players, setPlayers] = useState<Player[]>([])
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
@@ -101,7 +101,7 @@ const BoardPage = () => {
         console.log('Buy response:', response.data);
       };
       buy();
-      setNewBuy(true);
+      setCanBuy(false);
     } catch (err) {
       console.error('Error buying property:', err);
     }
@@ -175,29 +175,28 @@ const BoardPage = () => {
         });
       console.log('Rolled dice:', roll.data);
 
-      setNewBuy(false)
+      setCanBuy(false)
       setCurrentRound(roll.data.property);
       setDice1(roll.data.dice[0]);
       setDice2(roll.data.dice[1])
 
       // go to prison, start(collect 200),luxury tax, chance, community chest
       // price isnt 0
-      if(roll.data.property.can_buy) {
-        //todo: buy/start auction
-      } else if(roll.data.property.can_pay_rent) {
-
-      } else if(roll.data.property.auction) {
-        //todo: auction
-      } else if(roll.data.property.chance) {
-
-      } else if(roll.data.property.community_chest) {
-
-      } else if(roll.data.property.go_to_jail) {
-
-      } else if(roll.data.property.luxury_tax) {
-
+      if(roll.data.property.owner_id !== null) {
+        //todo pay rent/ verificare daca e a lui
+      } else if(roll.data.property.name === "chance") {
+        setShowChance(true)
+      } else if(roll.data.property.name === "Community Chest") {
+        setShowCommunityChest(true)
+      } else if(roll.data.property.name === "Go to Jail") {
+      } else if(roll.data.property.name === "Income Tax") {
       } else if(roll.data.property.start) {
+        //todo: collect 200
+      } else if(roll.data.property.name === "Jail") {
+      } else if(roll.data.property.name === "Free Parking") {
 
+      } else{
+        setCanBuy(true)
       }
     } catch (err) {
       console.error('Error rolling dice:', err);
@@ -230,18 +229,10 @@ const BoardPage = () => {
             <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg rounded-md">
               {/* Tabs */}
               <div className="flex justify-between mb-2">
-                {/* {['Buy', 'Manage', 'Trade'].map((tab) => (
-                  <button
-                    key={tab}
-                    className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
-                     to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
-                  >
-                    {tab}
-                  </button>
-                ))} */}
-
+                
                 <button
                   onClick={() => onBuy(currentRound?.id)}
+                  disabled={canBuy}
                     className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
                      to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
                   >
