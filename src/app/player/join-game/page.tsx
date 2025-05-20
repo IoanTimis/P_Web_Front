@@ -35,6 +35,7 @@ export default function JoinRoomPage() {
       try {
         const resp = await axios.get<Game[]>(`${apiUrl}/games`);
         setGames(resp.data);
+        console.log('Fetched games:', resp.data);
       } catch (err) {
         console.error('Error fetching games:', err);
       } finally {

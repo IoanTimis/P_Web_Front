@@ -59,12 +59,13 @@ export default function WaitingRoomPage() {
   useEffect(() => {
     const fetchGame = async () => {
       try {
-        const resp = await axios.get<Game>(`${apiUrl}/games/${id}/player_data`, {
+        const resp = await axios.get<Game>(`${apiUrl}/games/${id}`, {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log('Game data:', resp.data);
         setPlayers(resp.data.players.map(player => player.username));
       } catch (err) {
         console.error('Error fetching games:', err);
