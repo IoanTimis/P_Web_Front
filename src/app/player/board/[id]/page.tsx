@@ -6,14 +6,8 @@ import { useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import axios from "axios"
 import PlayerStatusModal from "@/app/components/statsModal"
-
-type Player = {
-  id: number;
-  position: number;
-  balance: number;
-  in_jail: boolean;
-  is_bankrupt: boolean;
-};
+import InfoModal from "@/app/components/infoModal"
+import { Player } from "@/types/page"
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -35,23 +29,31 @@ const TILE_COUNT_COL = 9
 const TILE_SIZE = 50
 
 const BoardPage = () => {
-  const [game, setGame] = useState<any>(null)
-  const [canBuy, setCanBuy] = useState<boolean>(false)
-  const [currentRound, setCurrentRound] = useState<any>()
-  const [players, setPlayers] = useState<Player[]>([])
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
-  const [showStatsModal, setShowStatsModal] = useState(false)
-  const [showTradeModal, setShowTradeModal] = useState(false)
-  const [showAuctionModal, setShowAuctionModal] = useState(false)
-  const [showChance, setShowChance] = useState(false)
-  const [showCommunityChest, setShowCommunityChest] = useState(false)
-  const [dice1, setDice1] = useState<number | null>(null)
-  const [dice2, setDice2] = useState<number | null>(null)
+  const [game, setGame] = useState<any>(null);
+  const [canBuy, setCanBuy] = useState<boolean>(true);
+  const [currentRound, setCurrentRound] = useState<any>();
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [infoMessage, setInfoMessage] = useState('');
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showAuctionModal, setShowAuctionModal] = useState(false);
+  const [showChance, setShowChance] = useState(false);
+  const [showCommunityChest, setShowCommunityChest] = useState(false);
+  const [dice1, setDice1] = useState<number | null>(null);
+  const [dice2, setDice2] = useState<number | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
   const user = useSelector((state: any) => state.user);
   const token = String(user?.data?.user?.token);
+
+
+  const infoModal = (message : string) => {
+    setShowInfoModal(true);
+    setInfoMessage(message);
+  }
 
   const statsModal = () => {
     setShowStatsModal(true); 
@@ -63,6 +65,12 @@ const BoardPage = () => {
 
   const auctionModal = () => {
     //todo
+  }
+
+
+  const onCloseInfoModal = () => {
+    setShowInfoModal(false);
+    setInfoMessage('');
   }
 
   const onCloseStatsModal = () => {
@@ -180,22 +188,19 @@ const BoardPage = () => {
       setDice1(roll.data.dice[0]);
       setDice2(roll.data.dice[1])
 
-      // go to prison, start(collect 200),luxury tax, chance, community chest
-      // price isnt 0
-      if(roll.data.property.owner_id !== null) {
-        //todo pay rent/ verificare daca e a lui
+      if(roll.data.property.owner_id !== currentPlayer?.id) {
+        //todo pay rent: nestabilita functionalitatea/nu e pe backend
       } else if(roll.data.property.name === "chance") {
-        setShowChance(true)
+        //Todo: inca nu e pe backend
       } else if(roll.data.property.name === "Community Chest") {
-        setShowCommunityChest(true)
+        //Todo: inca nu e pe backend
       } else if(roll.data.property.name === "Go to Jail") {
+        infoModal("You landed on Go to Jail. Go directly to jail. Do not collect $200.");
       } else if(roll.data.property.name === "Income Tax") {
+        infoModal("You landed on Income Tax. Pay $80");
       } else if(roll.data.property.start) {
-        //todo: collect 200
-      } else if(roll.data.property.name === "Jail") {
-      } else if(roll.data.property.name === "Free Parking") {
-
-      } else{
+        infoModal("Collect $200 as you pass GO");
+      } else {
         setCanBuy(true)
       }
     } catch (err) {
@@ -228,8 +233,8 @@ const BoardPage = () => {
           <div className="flex-1 flex-col bg-green-200 flex items-center justify-center text-black">
             <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg rounded-md">
               {/* Tabs */}
-              <div className="flex justify-between mb-2">
-                
+              <div className="flex gap-5 justify-between mb-2">
+                {/*buy btn */}
                 <button
                   onClick={() => onBuy(currentRound?.id)}
                   disabled={canBuy}
@@ -237,6 +242,14 @@ const BoardPage = () => {
                      to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
                   >
                     buy
+                  </button>
+                {/*trade btn */}
+                  <button
+                  onClick={() => tradeModal()}
+                    className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
+                     to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
+                  >
+                    trade
                   </button>
 
               </div>
@@ -247,13 +260,13 @@ const BoardPage = () => {
                 <textarea
                   readOnly
                   className="border border-black resize-none rounded-md p-1 w-full h-20 text-xs font-mono"
-                  defaultValue={`It is Player 1's turn.`}
+                  value={`It is ${currentPlayer?.username} turn.`}
                 ></textarea>
 
                 {/* Player info */}
                 <div className="ml-2 border border-black rounded-md px-2 w-[85px] py-1 text-xs font-semibold bg-white">
-                  <div className="text-black">Player 1:</div>
-                  <div className="text-green-700">$1500</div>
+                  <div className="text-black">{currentPlayer?.username}:</div>
+                  <div className="text-green-700">${currentPlayer?.balance}</div>
                 </div>
               </div>
 
@@ -287,19 +300,18 @@ const BoardPage = () => {
             </div>
             {/* Player Stats - sub banii jucătorului */}
             <div className="mt-3 grid grid-cols-2 gap-2 w-100">
+              {/*TODO: cand se apasa pe un player va afisa un modal cu resurse detinute de acel player*/}
               {players.map((player, index) => (
                 <div
-                //Todo: temporar va trebui modficata.
                   key={index}
                   onClick={() => setShowStatsModal(true)}
                   className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
                 >
-                  <div className="font-semibold">Player {index}</div>
-                  <div className="text-green-700 font-bold">$1500</div>
+                  <div className="font-semibold">{player.username}</div>
+                  <div className="text-green-700 font-bold">${player.balance}</div>
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-fit bg-black text-white text-[10px] rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-                    {/* Conținut personalizat pentru fiecare jucător */}
                     Informatii
                   </div>
                 </div>
@@ -326,6 +338,13 @@ const BoardPage = () => {
        
 
       </div>
+
+      {showInfoModal && (
+        <InfoModal
+          message={infoMessage}
+          onClose={onCloseInfoModal}
+        />
+      )}
     </div>
   )
 }
