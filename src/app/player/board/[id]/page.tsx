@@ -1,4 +1,5 @@
 "use client"
+
 import rawTiles from "@/locales/tiles.json"
 import Tile from '@/app/components/tile'
 import { useEffect, useState } from 'react'
@@ -17,16 +18,8 @@ const tiles = rawTiles as Record<string, {
   amount?: number
 }>
 
-const property = {
-  can_buy: Boolean,
-  id: Number,
-  name: String,
-  price: Number
-}
-
 const TILE_COUNT_ROW = 11
 const TILE_COUNT_COL = 9
-const TILE_SIZE = 50
 
 const BoardPage = () => {
   const [game, setGame] = useState<any>(null);
@@ -38,9 +31,6 @@ const BoardPage = () => {
   const [infoMessage, setInfoMessage] = useState('');
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
-  const [showAuctionModal, setShowAuctionModal] = useState(false);
-  const [showChance, setShowChance] = useState(false);
-  const [showCommunityChest, setShowCommunityChest] = useState(false);
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
 
@@ -63,11 +53,6 @@ const BoardPage = () => {
     //todo
   }
 
-  const auctionModal = () => {
-    //todo
-  }
-
-
   const onCloseInfoModal = () => {
     setShowInfoModal(false);
     setInfoMessage('');
@@ -81,16 +66,8 @@ const BoardPage = () => {
     setShowTradeModal(false)
   }
 
-  const onCloseAuctionModal = () => {
-    setShowAuctionModal(false)
-  }
-
-  const onCloseChance = () => {
-    setShowChance(false)
-  }
-
-  const onCloseCommunityChest = () => {
-    setShowCommunityChest(false)
+  const onTrade = () => {
+    //todo
   }
   
   const onBuy = (id_prop: number) => {
@@ -115,27 +92,6 @@ const BoardPage = () => {
     }
   };
 
-  const onPayRent = () => {
-    //todo
-  }
-
-  const onAuction = () => {
-    //todo
-  }
-
-  const onChance = () => {
-    //todo
-  }
-
-  const onCommunityChest = () => {
-    //todo
-  }
-
-  const onTrade = () => {
-    //todo
-  }
-
-
   useEffect(() => {
     const gameStatus = async () => {
       if (!id || !token) {
@@ -152,7 +108,7 @@ const BoardPage = () => {
               Authorization: `Bearer ${token}`,
             }
           });
-        
+
         console.log('gameStatus', response.data);
         setGame(response.data);
         setPlayers(response.data.players.map((player: any) => player));
@@ -188,6 +144,13 @@ const BoardPage = () => {
       setDice1(roll.data.dice[0]);
       setDice2(roll.data.dice[1])
 
+      console.log("position", currentPlayer?.position, "dice", roll.data.dice[0], " ",roll.data.dice[1]);
+       
+      if(currentPlayer?.position + roll.data.dice[0] + roll.data.dice[1] >= 40) {
+        console.log("You passed GO");
+        infoModal("Collect $200 as you pass GO");
+      }
+
       if(roll.data.property.owner_id !== currentPlayer?.id) {
         //todo pay rent: nestabilita functionalitatea/nu e pe backend
       } else if(roll.data.property.name === "chance") {
@@ -196,10 +159,10 @@ const BoardPage = () => {
         //Todo: inca nu e pe backend
       } else if(roll.data.property.name === "Go to Jail") {
         infoModal("You landed on Go to Jail. Go directly to jail. Do not collect $200.");
+        console.log("You landed on Go to Jail. Go directly to jail. Do not collect $200.");
       } else if(roll.data.property.name === "Income Tax") {
         infoModal("You landed on Income Tax. Pay $80");
-      } else if(roll.data.property.start) {
-        infoModal("Collect $200 as you pass GO");
+        console.log("You landed on Income Tax. Pay $80");
       } else {
         setCanBuy(true)
       }
@@ -214,7 +177,7 @@ const BoardPage = () => {
 
         {/* SUS */}
         <div className="grid grid-cols-11 h-[90px]">
-          {[...Array(11)].map((_, i) => (
+          {[...Array(TILE_COUNT_ROW)].map((_, i) => (
             <Tile tileNumber={i + 20} players={players} key={i} {...tiles[(20 + i).toString()]} />
           ))}
         </div>
@@ -224,7 +187,7 @@ const BoardPage = () => {
 
           {/* STÂNGA */}
           <div className="grid grid-rows-9 w-[100px]">
-            {[...Array(9)].map((_, i) => (
+            {[...Array(TILE_COUNT_COL)].map((_, i) => (
               <Tile tileNumber={19 - i} players={players} key={i} {...tiles[(19 - i).toString()]} />
             ))}
           </div>
@@ -309,6 +272,12 @@ const BoardPage = () => {
                 >
                   <div className="font-semibold">{player.username}</div>
                   <div className="text-green-700 font-bold">${player.balance}</div>
+                  {/* Player image */}
+                  <img
+                    src={`/images/player_${index + 1}.png`}
+                    alt={`Player ${index + 1}`}
+                    className="h-6 w-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                  />
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-fit bg-black text-white text-[10px] rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
@@ -321,7 +290,7 @@ const BoardPage = () => {
 
           {/* DREAPTA */}
           <div className="grid grid-rows-9 w-[100px]">
-            {[...Array(9)].map((_, i) => (
+            {[...Array(TILE_COUNT_COL)].map((_, i) => (
               <Tile tileNumber={i + 31} players={players} key={i} {...tiles[(31 + i).toString()]} />
             ))}
           </div>
@@ -330,13 +299,12 @@ const BoardPage = () => {
 
         {/* JOS */}
         <div className="grid grid-cols-11 h-[90px]">
-          {[...Array(11)].map((_, i) => (
+          {[...Array(TILE_COUNT_ROW)].map((_, i) => (
             <Tile tileNumber={10 - i} players={players} key={i} {...tiles[(10 - i ).toString()]} />
           ))}
         </div>
         {/* MODAL */}
        
-
       </div>
 
       {showInfoModal && (

@@ -7,7 +7,7 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = ({ message, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-md shadow-lg w-[300px] text-center">
         <p className="mb-4 text-sm text-gray-800">{message}</p>
         <button
