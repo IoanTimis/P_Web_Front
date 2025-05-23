@@ -7,8 +7,9 @@ import { useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import axios from "axios"
 import PlayerStatusModal from "@/app/components/statsModal"
+import TradeModal from "@/app/components/tradeModal"
 import InfoModal from "@/app/components/infoModal"
-import { Player } from "@/types/page"
+import { Player, Property } from "@/types/page"
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -50,7 +51,7 @@ const BoardPage = () => {
   }
 
   const tradeModal = () => {
-    //todo
+    setShowTradeModal(true);
   }
 
   const onCloseInfoModal = () => {
@@ -110,9 +111,15 @@ const BoardPage = () => {
           });
 
         console.log('gameStatus', response.data);
+        const enrichedPlayers = response.data.players.map((player: Player) => ({
+          ...player,
+          properties: response.data.properties.filter((property: Property) => property.owner_id === player.id),
+        }));
+
+        const enrichedPlayer = enrichedPlayers.find((player: Player) => player.id === response.data.current_player_id);
+        setPlayers(enrichedPlayers);
         setGame(response.data);
-        setPlayers(response.data.players.map((player: any) => player));
-        setCurrentPlayer(response.data.players.find((player: any) => player.id === response.data.current_player_id));
+        setCurrentPlayer(enrichedPlayer);
       } catch (err) {
         console.error('Error fetching game status:', err);
       }
@@ -125,6 +132,7 @@ const BoardPage = () => {
   }, [id, token, dice1]);
 
   console.log("currentPlayer", currentPlayer);
+  console.log("players", players);
 
   const rollDice = async () => {
     try {
@@ -214,6 +222,8 @@ const BoardPage = () => {
                   >
                     trade
                   </button>
+
+                  {/* btn - trade offers */}
 
               </div>
 
@@ -311,6 +321,15 @@ const BoardPage = () => {
         <InfoModal
           message={infoMessage}
           onClose={onCloseInfoModal}
+        />
+      )}
+
+      {showTradeModal && (
+        <TradeModal
+          otherPlayers={players.filter((p) => p.id !== currentPlayer?.id)}
+          currentPlayer={currentPlayer}
+          onTrade={onTrade}
+          onClose={onCloseTradeModal}
         />
       )}
     </div>
