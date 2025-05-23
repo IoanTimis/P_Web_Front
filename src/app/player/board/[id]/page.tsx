@@ -9,7 +9,7 @@ import axios from "axios"
 import PlayerStatusModal from "@/app/components/statsModal"
 import TradeModal from "@/app/components/tradeModal"
 import InfoModal from "@/app/components/infoModal"
-import { Player, Property } from "@/types/page"
+import { Player, Property, TradeOffer } from "@/types/page"
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -34,6 +34,8 @@ const BoardPage = () => {
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
+
+  //TODO:manage trade modal care poate pus sa se actualizeze in gameStatus si acolo oricand acel player poate accepta/refuza
 
   const { id } = useParams<{ id: string }>();
 
@@ -67,8 +69,26 @@ const BoardPage = () => {
     setShowTradeModal(false)
   }
 
-  const onTrade = () => {
-    //todo
+  const onTrade = (tradeOffer: TradeOffer) => {
+    try {
+      const trade = async () => {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade`,
+          { ...tradeOffer, player_id: game.current_player_id },
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Trade response:', response.data);
+      };
+      trade();
+      setShowTradeModal(false);
+    } catch (err) {
+      console.error('Error making trade:', err);
+    }
   }
   
   const onBuy = (id_prop: number) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Player, Property } from "@/types/page"
+import { Player, Property, } from "@/types/page"
 
 interface TradeModalProps {
   currentPlayer: Player | null
@@ -47,7 +47,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
     onClose()
   }
 
- console.log('currentPlayer', currentPlayer)
+  console.log('currentPlayer', currentPlayer)
   console.log('otherPlayers', otherPlayers)
   const selectedPlayer = otherPlayers.find(p => p.id === selectedPlayerId)
 
@@ -56,7 +56,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       <div className="bg-white p-6 rounded-md shadow-lg w-[400px] space-y-4">
         <div className="flex justify-between">
           <h2 className="text-lg text-gray-800 font-semibold">Propune un schimb</h2>
-          <button onClick={onClose} className="text-red-600 text-3xl font-bold cursor-pointer">×</button>
+          <button onClick={onClose} className="text-red-600 text-xl font-bold cursor-pointer">×</button>
         </div>
 
         <label className="text-gray-800">
