@@ -21,13 +21,26 @@ export type Property = {
   is_mortgage: boolean;
 };
 
-//TODO:stabile forma finala
+export type reqOffer = {
+  amount: number;
+  property_ids: number[];
+}
+
 export interface TradeOffer {
-  toPlayerId: number
-  offeredMoney: number
-  requestedMoney: number
-  offeredProperties: Property[]
-  requestedProperties: Property[]
+  game_id: number;
+  offer: reqOffer;
+  request: reqOffer;
+  sender_id: number;
+  receiver_id: number | null;
+}
+
+export interface Trade {
+  game_id: number;
+  offer: reqOffer;
+  request: reqOffer;
+  sender_id: number;
+  sender_username: string;
+  trade_id: number;
 }
 
 

@@ -1,64 +1,75 @@
-import React from 'react'
-import { Player, Property, TradeOffer } from "@/types/page"
+import React from 'react';
+import { Player, Trade } from '@/types/page';
 
 interface ManageTradeModalProps {
-  offer: TradeOffer
-  onAccept: () => void
-  onReject: () => void
-  onClose: () => void
+  trades: Trade[];
+  onAccept: (tradeId: number) => void;
+  onReject: (tradeId: number) => void;
+  onClose: () => void;
 }
 
 const ManageTradeModal: React.FC<ManageTradeModalProps> = ({
-  offer,
+  trades,
   onAccept,
   onReject,
-  onClose
+  onClose,
 }) => {
   return (
     <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-md shadow-lg w-[400px] space-y-4">
-        <div className="flex justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Ofertă de schimb</h2>
-          <button onClick={onClose} className="text-red-600 text-xl font-bold">×</button>
+      <div className="bg-white p-6 rounded-md shadow-lg w-[600px] max-h-[80vh] overflow-y-auto">
+        <div className="flex justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">Oferte de schimb</h2>
+          <button onClick={onClose} className="text-red-600 text-xl font-bold cursor-pointer">X</button>
         </div>
 
-        <p className="text-sm text-gray-800">
-          <strong>{offer.fromPlayer.username}</strong> propune un schimb către <strong>{offer.toPlayer.username}</strong>
-        </p>
+        {(!trades || trades.length === 0) ? (
+          <p className="text-sm text-gray-800">Nu există oferte de schimb disponibile.</p>
+        ) : (
+          trades?.map((trade) => (
+            <div
+              key={trade.trade_id}
+              className="border rounded p-4 mb-4 flex flex-col space-y-2 text-sm text-gray-800"
+            >
+              <p>
+                <strong>{trade.sender_username}</strong> propune un schimb:
+              </p>
 
-        <div className="border rounded p-2 text-sm text-gray-800">
-          <h3 className="font-semibold mb-1">Oferă:</h3>
-          {offer.offeredMoney > 0 && <div>- ${offer.offeredMoney}</div>}
-          {offer.offeredProperties.map((prop) => (
-            <div key={`offered-${prop.id}`}>- {prop.name}</div>
-          ))}
-        </div>
+              <div>
+                <h3 className="font-semibold">Oferă:</h3>
+                {trade.offer.amount > 0 && <div>- ${trade.offer.amount}</div>}
+                {trade.offer.property_ids.map((id) => (
+                  <div key={`offered-${id}`}>- Proprietate ID: {id}</div>
+                ))}
+              </div>
 
-        <div className="border rounded p-2 text-sm text-gray-800">
-          <h3 className="font-semibold mb-1">Cere:</h3>
-          {offer.requestedMoney > 0 && <div>- ${offer.requestedMoney}</div>}
-          {offer.requestedProperties.map((prop) => (
-            <div key={`requested-${prop.id}`}>- {prop.name}</div>
-          ))}
-        </div>
+              <div>
+                <h3 className="font-semibold">Cere:</h3>
+                {trade.request.amount > 0 && <div>- ${trade.request.amount}</div>}
+                {trade.request.property_ids.map((id) => (
+                  <div key={`requested-${id}`}>- Proprietate ID: {id}</div>
+                ))}
+              </div>
 
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={onReject}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-[48%]"
-          >
-            Refuză
-          </button>
-          <button
-            onClick={onAccept}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-[48%]"
-          >
-            Acceptă
-          </button>
-        </div>
+              <div className="flex justify-between mt-4">
+                <button
+                  onClick={() => onReject(trade.trade_id)}
+                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 w-[48%]"
+                >
+                  Refuză
+                </button>
+                <button
+                  onClick={() => onAccept(trade.trade_id)}
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-[48%]"
+                >
+                  Acceptă
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageTradeModal
+export default ManageTradeModal;

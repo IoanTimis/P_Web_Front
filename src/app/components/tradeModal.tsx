@@ -1,19 +1,11 @@
 import React, { useState } from 'react'
-import { Player, Property, } from "@/types/page"
+import { Player, TradeOffer } from "@/types/page"
 
 interface TradeModalProps {
   currentPlayer: Player | null
   otherPlayers: Player[] | []
-  onTrade: (offer: TradeOffer) => void
+  onTrade: (offer: any) => void
   onClose: () => void
-}
-
-interface TradeOffer {
-  toPlayerId: number
-  offeredMoney: number
-  requestedMoney: number
-  offeredProperties: Property[]
-  requestedProperties: Property[]
 }
 
 const TradeModal: React.FC<TradeModalProps> = ({
@@ -25,26 +17,31 @@ const TradeModal: React.FC<TradeModalProps> = ({
   const [selectedPlayerId, setSelectedPlayerId] = useState<number>(otherPlayers[0]?.id || 0)
   const [offeredMoney, setOfferedMoney] = useState(0)
   const [requestedMoney, setRequestedMoney] = useState(0)
-  const [offeredProperties, setOfferedProperties] = useState<Property[]>([])
-  const [requestedProperties, setRequestedProperties] = useState<Property[]>([])
+  const [offeredProperties, setOfferedProperties] = useState<number[]>([]);
+  const [requestedProperties, setRequestedProperties] = useState<number[]>([]);
 
   const handleCheckboxChange = (
-    prop: Property,
-    state: Property[],
-    setState: React.Dispatch<React.SetStateAction<Property[]>>
+    propId: number,
+    state: number[],
+    setState: React.Dispatch<React.SetStateAction<number[]>>
   ) => {
-    setState(state.includes(prop) ? state.filter(p => p !== prop) : [...state, prop])
+    setState(state.includes(propId) ? state.filter(id => id !== propId) : [...state, propId]);
   }
 
+  //TODO: Implement the actual trade logic
   const handleSubmit = () => {
     onTrade({
-      toPlayerId: selectedPlayerId,
-      offeredMoney,
-      requestedMoney,
-      offeredProperties,
-      requestedProperties
-    })
-    onClose()
+      receiver_id: selectedPlayerId,
+      offer: {
+        amount: offeredMoney,
+        property_ids: offeredProperties
+      },
+      request: {
+        amount: requestedMoney,
+        property_ids: requestedProperties
+      },
+    });
+    onClose();
   }
 
   console.log('currentPlayer', currentPlayer)
@@ -56,7 +53,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
       <div className="bg-white p-6 rounded-md shadow-lg w-[400px] space-y-4">
         <div className="flex justify-between">
           <h2 className="text-lg text-gray-800 font-semibold">Propune un schimb</h2>
-          <button onClick={onClose} className="text-red-600 text-xl font-bold cursor-pointer">×</button>
+          <button onClick={onClose} className="text-red-600 text-xl font-bold cursor-pointer">X</button>
         </div>
 
         <label className="text-gray-800">
@@ -87,8 +84,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
               <label key={`offer-${prop.id}`} className="block text-gray-800">
                 <input
                   type="checkbox"
-                  checked={offeredProperties.includes(prop)}
-                  onChange={() => handleCheckboxChange(prop, offeredProperties, setOfferedProperties)}
+                  checked={offeredProperties.includes(prop.id)}
+                  onChange={() => handleCheckboxChange(prop.id, offeredProperties, setOfferedProperties)}
                   className="text-gray-800"
                 /> {prop.name}
               </label>
@@ -111,8 +108,8 @@ const TradeModal: React.FC<TradeModalProps> = ({
               <label key={`request-${prop.id}`} className="block text-gray-800">
                 <input
                   type="checkbox"
-                  checked={requestedProperties.includes(prop)}
-                  onChange={() => handleCheckboxChange(prop, requestedProperties, setRequestedProperties)}
+                  checked={requestedProperties.includes(prop.id)}
+                  onChange={() => handleCheckboxChange(prop.id, requestedProperties, setRequestedProperties)}
                   className="text-gray-800"
                 /> {prop.name}
               </label>

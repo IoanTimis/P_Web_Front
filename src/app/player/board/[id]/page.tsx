@@ -9,7 +9,9 @@ import axios from "axios"
 import PlayerStatusModal from "@/app/components/statsModal"
 import TradeModal from "@/app/components/tradeModal"
 import InfoModal from "@/app/components/infoModal"
-import { Player, Property, TradeOffer } from "@/types/page"
+import ManageTradeModal from "@/app/components/manageTradeModal"
+import { Player, Property, TradeOffer, Trade } from "@/types/page"
+import { on } from "events"
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -24,18 +26,19 @@ const TILE_COUNT_COL = 9
 
 const BoardPage = () => {
   const [game, setGame] = useState<any>(null);
+  // const [tradeOffer, setTradeOffer] = useState<TradeOffer | null>(null);
   const [canBuy, setCanBuy] = useState<boolean>(true);
   const [currentRound, setCurrentRound] = useState<any>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [trades, setTrades] = useState<Trade[]>([]);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
+  const [showManageTradeModal, setShowManageTradeModal] = useState(false);
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
-
-  //TODO:manage trade modal care poate pus sa se actualizeze in gameStatus si acolo oricand acel player poate accepta/refuza
 
   const { id } = useParams<{ id: string }>();
 
@@ -56,6 +59,10 @@ const BoardPage = () => {
     setShowTradeModal(true);
   }
 
+  const manageTradeModal = () => {
+    setShowManageTradeModal(true);
+  }
+
   const onCloseInfoModal = () => {
     setShowInfoModal(false);
     setInfoMessage('');
@@ -69,12 +76,68 @@ const BoardPage = () => {
     setShowTradeModal(false)
   }
 
-  const onTrade = (tradeOffer: TradeOffer) => {
+  const onCloseManageTradeModal = () => {
+    setShowManageTradeModal(false)
+  }
+
+  const onAcceptTrade = (tradeId: number) => {
+    try {
+      const acceptTrade = async () => {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade/${tradeId}/accept`,
+          { player_id: currentPlayer?.id },
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Trade accepted:', response.data);
+        setTrades(trades.filter(trade => trade.trade_id !== tradeId));
+      };
+      acceptTrade();
+      setShowManageTradeModal(false);
+    } catch (err) {
+      console.error('Error accepting trade:', err);
+    }
+  }
+
+  const onRejectTrade = (tradeId: number) => {
+    try {
+      const rejectTrade = async () => {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade/${tradeId}/reject`,
+          { player_id: currentPlayer?.id },
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log('Trade rejected:', response.data);
+        setTrades(trades.filter(trade => trade.trade_id !== tradeId));
+      };
+      rejectTrade();
+      setShowManageTradeModal(false);
+    } catch (err) {
+      console.error('Error rejecting trade:', err);
+    }
+  }
+
+  const onTrade = (tradeInfo: any) => {
     try {
       const trade = async () => {
+        console.log('Making trade with info:', tradeInfo, currentPlayer);
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade`,
-          { ...tradeOffer, player_id: game.current_player_id },
+          { 
+            offer: tradeInfo.offer, 
+            request: tradeInfo.request,
+            receiver_id: tradeInfo.receiver_id, 
+            sender_id: currentPlayer?.id
+          },
           {
             withCredentials: true,
             headers: {
@@ -113,6 +176,23 @@ const BoardPage = () => {
     }
   };
 
+  const getCurrentPlayerTrades = async () => {
+    try {
+      const tradesResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trades`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+      console.log('Trades response:', tradesResponse.data);
+      setTrades(tradesResponse.data.trades);
+    } catch (err) {
+      console.error('Error fetching trades:', err);
+    }
+  };
+
   useEffect(() => {
     const gameStatus = async () => {
       if (!id || !token) {
@@ -146,6 +226,7 @@ const BoardPage = () => {
     };
     
     gameStatus();
+    getCurrentPlayerTrades();  
     // Reactualizare informatii la interval, acum e 5 sec
     // const interval = setInterval(gameStatus, 5000);
     // return () => clearInterval(interval);
@@ -244,6 +325,13 @@ const BoardPage = () => {
                   </button>
 
                   {/* btn - trade offers */}
+                  <button
+                  onClick={() => manageTradeModal()}
+                    className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
+                     to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
+                  >
+                    trade offers {trades?.length > 0 ? `(${trades?.length})` : 0}
+                  </button>
 
               </div>
 
@@ -350,6 +438,14 @@ const BoardPage = () => {
           currentPlayer={currentPlayer}
           onTrade={onTrade}
           onClose={onCloseTradeModal}
+        />
+      )}
+      {showManageTradeModal && (
+        <ManageTradeModal
+          trades={trades}
+          onAccept={onAcceptTrade}
+          onReject={onRejectTrade}
+          onClose={onCloseManageTradeModal}
         />
       )}
     </div>
