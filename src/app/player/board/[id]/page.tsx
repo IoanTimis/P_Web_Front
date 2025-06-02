@@ -83,6 +83,10 @@ const BoardPage = () => {
   const onAcceptTrade = (tradeId: number) => {
     try {
       const acceptTrade = async () => {
+        if (!token) {
+          console.error('Authorization token is missing');
+          return;
+        }
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade/${tradeId}/accept`,
           { player_id: currentPlayer?.id },
@@ -101,11 +105,15 @@ const BoardPage = () => {
     } catch (err) {
       console.error('Error accepting trade:', err);
     }
-  }
+  };
 
   const onRejectTrade = (tradeId: number) => {
     try {
       const rejectTrade = async () => {
+        if (!token) {
+          console.error('Authorization token is missing');
+          return;
+        }
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/games/${id}/trade/${tradeId}/reject`,
           { player_id: currentPlayer?.id },
@@ -124,7 +132,7 @@ const BoardPage = () => {
     } catch (err) {
       console.error('Error rejecting trade:', err);
     }
-  }
+  };
 
   const onTrade = (tradeInfo: any) => {
     try {
@@ -187,7 +195,7 @@ const BoardPage = () => {
           }
         });
       console.log('Trades response:', tradesResponse.data);
-      setTrades(tradesResponse.data.trades);
+      setTrades(tradesResponse.data);
     } catch (err) {
       console.error('Error fetching trades:', err);
     }
@@ -280,6 +288,9 @@ const BoardPage = () => {
     }
   }
 
+  console.log("currentplayer username:", currentPlayer?.username);
+  console.log("user username:", user.data.user.userName);
+
   return (
     <div className="py-1  min-h-screen bg-gray-200 flex justify-center items-center">
       <div className="w-[1100px] min-h-screen bg-green-200 flex flex-col shadow-2xl">
@@ -337,12 +348,9 @@ const BoardPage = () => {
 
               {/* Status + Player */}
               <div className="flex">
-                {/* Status textarea */}
-                <textarea
-                  readOnly
-                  className="border border-black resize-none rounded-md p-1 w-full h-20 text-xs font-mono"
-                  value={`It is ${currentPlayer?.username} turn.`}
-                ></textarea>
+                <div className="border border-black rounded-md p-1 w-full h-20 text-xs font-mono">
+                  It is {currentPlayer?.username == user?.data.user.userName? "your" : `${currentPlayer?.username}'s`} turn.
+                </div>
 
                 {/* Player info */}
                 <div className="ml-2 border border-black rounded-md px-2 w-[85px] py-1 text-xs font-semibold bg-white">
@@ -443,6 +451,7 @@ const BoardPage = () => {
       {showManageTradeModal && (
         <ManageTradeModal
           trades={trades}
+          properties={game?.properties}
           onAccept={onAcceptTrade}
           onReject={onRejectTrade}
           onClose={onCloseManageTradeModal}

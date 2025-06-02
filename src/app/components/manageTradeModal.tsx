@@ -1,8 +1,9 @@
 import React from 'react';
-import { Player, Trade } from '@/types/page';
+import { Player, Trade, Property } from '@/types/page';
 
 interface ManageTradeModalProps {
   trades: Trade[];
+  properties: Property[];
   onAccept: (tradeId: number) => void;
   onReject: (tradeId: number) => void;
   onClose: () => void;
@@ -10,10 +11,13 @@ interface ManageTradeModalProps {
 
 const ManageTradeModal: React.FC<ManageTradeModalProps> = ({
   trades,
+  properties,
   onAccept,
   onReject,
   onClose,
 }) => {
+
+  console.log('ManageTradeModal trades', trades);
   return (
     <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-md shadow-lg w-[600px] max-h-[80vh] overflow-y-auto">
@@ -38,7 +42,7 @@ const ManageTradeModal: React.FC<ManageTradeModalProps> = ({
                 <h3 className="font-semibold">Oferă:</h3>
                 {trade.offer.amount > 0 && <div>- ${trade.offer.amount}</div>}
                 {trade.offer.property_ids.map((id) => (
-                  <div key={`offered-${id}`}>- Proprietate ID: {id}</div>
+                  <div key={`offered-${id}`}> {properties.find(prop => prop.id === id)?.name}</div>
                 ))}
               </div>
 
@@ -46,7 +50,7 @@ const ManageTradeModal: React.FC<ManageTradeModalProps> = ({
                 <h3 className="font-semibold">Cere:</h3>
                 {trade.request.amount > 0 && <div>- ${trade.request.amount}</div>}
                 {trade.request.property_ids.map((id) => (
-                  <div key={`requested-${id}`}>- Proprietate ID: {id}</div>
+                  <div key={`requested-${id}`}>{properties.find(prop => prop.id === id)?.name}</div>
                 ))}
               </div>
 
