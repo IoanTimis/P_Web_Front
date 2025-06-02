@@ -63,7 +63,7 @@ export default function JoinRoomPage() {
       router.push(`/player/waiting-room/${gameId}`);
     } catch (err) {
       console.error('Join failed:', err);
-      alert('Nu s-a putut intra în joc. Încearcă din nou.');
+      alert('Could not join the game. Please try again.');
     }
   };
 
@@ -142,7 +142,7 @@ export default function JoinRoomPage() {
         </table>
         {games.length === 0 && (
           <p className="p-6 text-center text-gray-500">
-            Nu există jocuri disponibile în acest moment.
+            There are no games available at the moment.
           </p>
         )}
       </div>

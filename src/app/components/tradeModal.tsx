@@ -52,12 +52,12 @@ const TradeModal: React.FC<TradeModalProps> = ({
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-md shadow-lg w-[400px] space-y-4">
         <div className="flex justify-between">
-          <h2 className="text-lg text-gray-800 font-semibold">Propune un schimb</h2>
+          <h2 className="text-lg text-gray-800 font-semibold">Propose a trade</h2>
           <button onClick={onClose} className="text-red-600 text-xl font-bold cursor-pointer">X</button>
         </div>
 
         <label className="text-gray-800">
-          Jucător:
+          Player:
           <select
             value={selectedPlayerId}
             onChange={(e) => setSelectedPlayerId(Number(e.target.value))}
@@ -70,13 +70,13 @@ const TradeModal: React.FC<TradeModalProps> = ({
         </label>
 
         <div>
-          <h3 className="font-semibold text-gray-800">Ce oferi</h3>
+          <h3 className="font-semibold text-gray-800">What do you offer</h3>
           <input
             type="number"
             min={0}
             value={offeredMoney}
             onChange={(e) => setOfferedMoney(Number(e.target.value))}
-            placeholder="Bani"
+            placeholder="Money"
             className="w-full border px-2 py-1 mt-1 text-gray-800"
           />
           <div className="mt-2">
@@ -94,13 +94,13 @@ const TradeModal: React.FC<TradeModalProps> = ({
         </div>
 
         <div>
-          <h3 className="font-semibold text-gray-800">Ce ceri</h3>
+          <h3 className="font-semibold text-gray-800">What do you want</h3>
           <input
             type="number"
             min={0}
             value={requestedMoney}
             onChange={(e) => setRequestedMoney(Number(e.target.value))}
-            placeholder="Bani"
+            placeholder="Money"
             className="w-full border px-2 py-1 mt-1 text-gray-800"
           />
           <div className="mt-2">
@@ -121,7 +121,7 @@ const TradeModal: React.FC<TradeModalProps> = ({
           onClick={handleSubmit}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
         >
-          Trimite oferta
+          Send offer
         </button>
       </div>
     </div>
