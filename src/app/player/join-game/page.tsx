@@ -18,6 +18,7 @@ export interface Game {
   }>;
   max_players: number;
   name: string;
+  status: string; // Added status property to track game state
 }
 
 export default function JoinRoomPage() {

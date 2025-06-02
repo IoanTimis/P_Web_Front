@@ -26,7 +26,7 @@ const NavBar = () => {
     return (
       <nav className="bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
         <div className="text-lg font-semibold space-x-4">
-          <Link href="/">🏠 Monopoly</Link>
+          <Link href="/">🏠 <span className='hover:underline'>Monopoly</span></Link>
           <Link href="/player/dashboard" className="hover:underline">Dashboard</Link>
           <Link href="/player/board" className="hover:underline">Board</Link>
         </div>

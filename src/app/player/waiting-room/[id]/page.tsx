@@ -10,17 +10,15 @@ import { Game } from '../../join-game/page';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function WaitingRoomPage() {
-  //TODO: add quit daca se face si pe backend
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
   const token = String(user?.data?.user?.token);
   const { id } = useParams<{ id: string }>();
-  const [players, setPlayers] = useState<string[]>([
-
-  ]);
+  const [players, setPlayers] = useState<string[]>([]);
+  
   const [inviteLink, setInviteLink] = useState(
     typeof window !== 'undefined'
-      ? `${window.location.origin}/join/${Math.random().toString(36).slice(2)}`
+      ? `${window.location.origin}/join/${id}`
       : ''
   );
   const [copySuccess, setCopySuccess] = useState('');
@@ -55,25 +53,38 @@ export default function WaitingRoomPage() {
     }
   };
 
-
-
   useEffect(() => {
-    const fetchGame = async () => {
-      try {
-        const resp = await axios.get<Game>(`${apiUrl}/games/${id}`, {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log('Game data:', resp.data);
-        setPlayers(resp.data.players.map(player => player.username));
-      } catch (err) {
-        console.error('Error fetching games:', err);
+    let waiting = true;
+    const fetchGameData = async () => {
+    try {
+      const resp = await axios.get<Game>(`${apiUrl}/games/${id}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setPlayers(resp.data.players.map(player => player.username));
+      console.log('Fetched game data:', resp.data);
+
+      if (resp.data.status === 'active') {
+        console.log('Game is active, redirecting to board...');
+        router.push(`/player/board/${id}`);
+        waiting = false;
       }
-    };
-    fetchGame();
-  }, []);
+    } catch (err) {
+      console.error('Error fetching game data:', err);
+    }
+  };
+
+    fetchGameData();
+
+    if(waiting) {
+      const interval = setInterval(fetchGameData, 5000); 
+      return () => clearInterval(interval);
+    }
+  }, [id, token]);
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
@@ -148,7 +159,7 @@ export default function WaitingRoomPage() {
         <button
           className={`w-full py-2 rounded-lg text-white font-semibold transition ${
             players.length >= 2
-              ? 'bg-green-600 hover:bg-green-700'
+              ? 'bg-green-600 hover:bg-green-700 cursor-pointer'
               : 'bg-gray-400 cursor-not-allowed'
           }`}
           onClick={handleStartGame}
