@@ -129,7 +129,7 @@ export default function JoinRoomPage() {
                     disabled={g.players.length >= g.max_players}
                     className={`px-4 py-2 text-sm font-medium rounded-lg transition ${
                       g.players.length < g.max_players
-                        ? 'bg-green-600 hover:bg-green-700 text-white'
+                        ? 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'
                         : 'bg-gray-300 text-gray-600 cursor-not-allowed'
                     }`}
                   >

@@ -20,13 +20,13 @@ export default function Dashboard() {
       <div className="flex flex-col gap-4 w-full max-w-md">
         <button
           onClick={() => router.push('/player/create-game')}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition cursor-pointer"
         >
           Create Game
         </button>
 
         <button
-          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-800 transition"
+          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-800 transition cursor-pointer"
           onClick={() => router.push('/player/join-game')}
         >
           Join Game

@@ -10,6 +10,7 @@ import { Game } from '../../join-game/page';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function WaitingRoomPage() {
+  //TODO: add quit daca se face si pe backend
   const router = useRouter();
   const user = useSelector((state: any) => state.user);
   const token = String(user?.data?.user?.token);

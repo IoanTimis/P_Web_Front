@@ -31,7 +31,7 @@ export default function HomePage() {
       </p>
       <button
         onClick={handlePlayNow}
-        className="bg-green-600 text-white text-lg px-6 py-3 rounded-xl hover:bg-green-700 transition"
+        className="bg-green-600 text-white text-lg px-6 py-3 rounded-xl hover:bg-green-700 transition cursor-pointer"
       >
         Joaca acum
       </button>

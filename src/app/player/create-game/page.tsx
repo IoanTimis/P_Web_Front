@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function CreateGamePage() {
+  //TODO: poate da start doar daca el a creat jocul
   const router = useRouter();
   const [playerCount, setPlayerCount] = useState(2);
   const [gameName, setGameName] = useState('');
@@ -66,7 +67,7 @@ export default function CreateGamePage() {
           </select>
         </label>
 
-        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer">
           Start Game
         </button>
       </form>
