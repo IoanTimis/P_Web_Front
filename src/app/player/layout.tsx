@@ -25,7 +25,7 @@ export default function PlayerLayout({ children }: PlayerLayoutProps) {
   }, [user, pathname, router]);
 
   if (!user) {
-    return null;
+    return (<div className='bg-gray-100 min-h-screen flex items-center justify-center'>Loading...</div>);
   }
 
   return (
