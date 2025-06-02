@@ -314,7 +314,7 @@ const BoardPage = () => {
 
           {/* CONTINUT CENTRAL */}
           <div className="flex-1 flex-col bg-green-200 flex items-center justify-center text-black">
-            <div className="bg-white border border-black p-4 w-100 text-sm shadow-lg rounded-md">
+            <div className="bg-white border border-black p-3 w-100 text-sm shadow-lg rounded-md">
               {/* Tabs */}
               <div className="flex gap-5 justify-between mb-2">
                 {/*buy btn */}
@@ -341,7 +341,7 @@ const BoardPage = () => {
                     className="cursor-pointer bg-gradient-to-b rounded-md hover:to-blue-900 from-blue-500
                      to-blue-700 text-white px-3 py-1 border border-white text-xs font-semibold w-full"
                   >
-                    trade offers {trades?.length > 0 ? `(${trades?.length})` : 0}
+                    trade offers {trades?.length > 0 ? `(${trades?.length})` : "(0)"}
                   </button>
 
               </div>
