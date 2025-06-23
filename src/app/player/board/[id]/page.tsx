@@ -1,17 +1,16 @@
 "use client"
 
-import rawTiles from "@/locales/tiles.json"
-import Tile from '@/app/components/tile'
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { useSelector } from 'react-redux'
-import axios from "axios"
-import PlayerStatusModal from "@/app/components/statsModal"
-import TradeModal from "@/app/components/tradeModal"
 import InfoModal from "@/app/components/infoModal"
 import ManageTradeModal from "@/app/components/manageTradeModal"
-import { Player, Property, TradeOffer, Trade } from "@/types/page"
-import { on } from "events"
+import PlayerStatusModal from "@/app/components/statsModal"
+import Tile from '@/app/components/tile'
+import TradeModal from "@/app/components/tradeModal"
+import rawTiles from "@/locales/tiles.json"
+import { Player, Property, Trade } from "@/types/page"
+import axios from "axios"
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const tiles = rawTiles as Record<string, {
   name: string
@@ -39,6 +38,7 @@ const BoardPage = () => {
   const [showManageTradeModal, setShowManageTradeModal] = useState(false);
   const [dice1, setDice1] = useState<number | null>(null);
   const [dice2, setDice2] = useState<number | null>(null);
+  const [clickedPlayer, setClickedPlayer] = useState<Player | null>(null);
 
   const { id } = useParams<{ id: string }>();
 
@@ -51,7 +51,8 @@ const BoardPage = () => {
     setInfoMessage(message);
   }
 
-  const statsModal = () => {
+  const statsModal = (user: Player) => () => {
+    setClickedPlayer(user);
     setShowStatsModal(true); 
   }
 
@@ -236,8 +237,8 @@ const BoardPage = () => {
     gameStatus();
     getCurrentPlayerTrades();  
     // Reactualizare informatii la interval, acum e 5 sec
-    // const interval = setInterval(gameStatus, 5000);
-    // return () => clearInterval(interval);
+    const interval = setInterval(gameStatus, 1000);
+    return () => clearInterval(interval);
   }, [id, token, dice1]);
 
   console.log("currentPlayer", currentPlayer);
@@ -403,6 +404,7 @@ const BoardPage = () => {
                     src={`/images/player_${index + 1}.png`}
                     alt={`Player ${index + 1}`}
                     className="h-6 w-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    onClick={statsModal(player)}
                   />
 
                   {/* Tooltip */}
@@ -411,7 +413,7 @@ const BoardPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> 
           </div>
 
           {/* DREAPTA */}
@@ -432,6 +434,13 @@ const BoardPage = () => {
         {/* MODAL */}
        
       </div>
+
+      {showStatsModal && clickedPlayer && (
+        <PlayerStatusModal player={clickedPlayer} onClose={() => {
+          setShowStatsModal(false);
+          setClickedPlayer(null);
+        }}/>
+      )}
 
       {showInfoModal && (
         <InfoModal
