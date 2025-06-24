@@ -12,7 +12,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ message, onClose }) => {
         <p className="mb-4 text-sm text-gray-800">{message}</p>
         <button
           onClick={onClose}
-          className="px-4 py-1 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+          className="px-4 py-1 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 cursor-pointer"
         >
           OK
         </button>

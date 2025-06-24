@@ -180,6 +180,7 @@ const BoardPage = () => {
       };
       buy();
       setCanBuy(false);
+      infoModal("Ai cumpărat proprietatea cu succes!");
     } catch (err) {
       console.error('Error buying property:', err);
     }
@@ -237,7 +238,7 @@ const BoardPage = () => {
     gameStatus();
     getCurrentPlayerTrades();  
     // Reactualizare informatii la interval, acum e 5 sec
-    const interval = setInterval(gameStatus, 1000);
+    const interval = setInterval(gameStatus, 5000);
     return () => clearInterval(interval);
   }, [id, token, dice1]);
 
@@ -394,7 +395,7 @@ const BoardPage = () => {
               {players.map((player, index) => (
                 <div
                   key={index}
-                  onClick={() => setShowStatsModal(true)}
+                  onClick={statsModal(player)}
                   className="group relative cursor-pointer border border-gray-400 rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200"
                 >
                   <div className="font-semibold">{player.username}</div>
@@ -404,7 +405,6 @@ const BoardPage = () => {
                     src={`/images/player_${index + 1}.png`}
                     alt={`Player ${index + 1}`}
                     className="h-6 w-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                    onClick={statsModal(player)}
                   />
 
                   {/* Tooltip */}
